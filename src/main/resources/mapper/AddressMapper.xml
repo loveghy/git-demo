@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qn.computersell.mapper.AddressMapper">
+    <resultMap id="AddressEntity" type="com.qn.computersell.entity.Address">
+        <result column="province_name" property="provinceName"></result>
+        <result column="province_code" property="provinceCode"></result>
+        <result column="city_name" property="cityName"></result>
+        <result column="city_code" property="cityCode"></result>
+        <result column="area_name" property="areaName"></result>
+        <result column="created_user" property="createdUser"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="modified_user" property="modifiedUser"/>
+        <result column="modified_time" property="modifiedTime"/>
+    </resultMap>
+
+    <insert id="insertAddress" useGeneratedKeys="true" keyProperty="aid">
+        insert into t_address(
+        uid,
+        name,
+        province_name,
+        province_code,
+        city_name,
+        city_code,
+        area_name,
+        area_code,
+        zip,
+        address,
+        phone,
+        tel,
+        tag,
+        isDefault,created_user,created_time,modified_user,modified_time) values (
+        #{uid},
+        #{name},
+        #{provinceName},
+        #{provinceCode},
+        #{cityName},
+        #{cityCode},
+        #{areaName},
+        #{areaCode},
+        #{zip},
+        #{address},
+        #{phone},
+        #{tel},
+        #{tag},
+        #{isDefault},#{createdUser},#{createdTime},#{modifiedUser},#{modifiedTime})
+    </insert>
+
+    <select id="countAddressesByUid" resultType="java.lang.Integer">
+        select count(*) from t_address where uid=#{uid}
+    </select>
+
+    <select id="findAddressByUid" resultMap="AddressEntity">
+        select *from t_address
+        where uid=#{uid}
+        order by isdefault desc,created_time desc
+    </select>
+
+    <update id="updateNonDefaultByUid">
+        update t_address
+        set isDefault=0
+        where uid=#{uid}
+    </update>
+
+    <update id="updateDefaultByAid">
+        update t_address
+        set isDefault=1,modified_user=#{modifiedUser},modified_time=#{modifiedTime}
+        where aid=#{aid}
+    </update>
+
+    <select id="findAddressByAid" resultMap="AddressEntity">
+        select *from t_address where aid=#{aid}
+    </select>
+
+    <delete id="deletedAddressByAid">
+        delete from t_address where aid=#{aid}
+    </delete>
+    <select id="findLastModifiedTimeByUid" resultMap="AddressEntity">
+        select *from t_address where uid=#{uid} order by modified_time desc limit 0,1
+    </select>
+</mapper>
